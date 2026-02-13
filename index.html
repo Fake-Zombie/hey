@@ -2,109 +2,138 @@
 <html>
 <head>
   <title>Catch the Button 😈</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-/* Love Theme Styling */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+      padding: 20px;
+      box-sizing: border-box;
+    }
 
-body {
-  margin: 0;
-  height: 100vh;
-  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-family: 'Poppins', sans-serif;
-  overflow: hidden;
+    h3 {
+      font-size: clamp(20px, 5vw, 28px);
+      color: #ffffff;
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 20px;
+      background: rgba(255, 0, 100, 0.2);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 25px rgba(255, 0, 100, 0.3);
+      animation: heartbeat 1.5s infinite;
+      max-width: 90%;
+    }
+
+.btn-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  height: 200px;
+  margin: 0 auto;
 }
 
-/* Love Question Heading */
-h3 {
-  font-size: 28px;
-  color: #ffffff;
-  text-align: center;
-  margin-bottom: 40px;
-  padding: 15px 25px;
-  padding-bottom: 5rem;
-  background: rgba(255, 0, 100, 0.2);
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 25px rgba(255, 0, 100, 0.3);
-  animation: heartbeat 1.5s infinite;
-}
 
-/* Buttons */
-button {
+   button {
   position: absolute;
-  padding: 14px 28px;
-  font-size: 18px;
-  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
   border-radius: 30px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  height: 48px;
+  min-width: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Yes Button */
+/* YES button fixed left side */
 #yesBtn {
-    left: 30%;
-    top: 50%;
+  left: 20%;
+  top: 50%;
+  transform: translateY(-50%);
   background: #ff4d6d;
   color: white;
 }
 
-#yesBtn:hover {
-
-  transform: scale(1.1);
-  box-shadow: 0 0 25px #ff4d6d;
-}
-
-/* No Button */
+/* NO button fixed right side */
 #noBtn {
-    left: 55%;
-    top: 50%;
-  background: #ffffff;
+  left: 60%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
   color: #ff4d6d;
 }
 
-#noBtn:hover {
-  transform: scale(1.1);
-}
 
-/* Heartbeat Animation */
-@keyframes heartbeat {
-  0% { transform: scale(1); }
-  25% { transform: scale(1.05); }
-  50% { transform: scale(1); }
-  75% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
+    @keyframes heartbeat {
+      0% { transform: scale(1); }
+      25% { transform: scale(1.05); }
+      50% { transform: scale(1); }
+      75% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
   </style>
 </head>
+
 <body>
+
 <h3>tum ankur ko message kyu nahi karta</h3>
-<button id="yesBtn">i am a fool</button>
-<button id="noBtn">wo nahi karta </button>
+
+<div class="btn-container">
+  <button id="yesBtn">i am a fool</button>
+  <button id="noBtn">wo nahi karta</button>
+</div>
 
 <script>
   const yesBtn = document.getElementById("yesBtn");
   const noBtn = document.getElementById("noBtn");
+  const container = document.querySelector(".btn-container");
 
   yesBtn.addEventListener("click", () => {
     alert("You selected the correct button!");
   });
 
   noBtn.addEventListener("click", (e) => {
-    e.preventDefault(); // stop normal click behavior
+    e.preventDefault();
     moveButton();
   });
 
   function moveButton() {
-    const maxWidth = window.innerWidth - noBtn.offsetWidth;
-    const maxHeight = window.innerHeight - noBtn.offsetHeight;
+    const maxWidth = container.clientWidth - noBtn.offsetWidth;
+    const maxHeight = container.clientHeight - noBtn.offsetHeight;
 
-    const randomX = Math.random() * maxWidth;
-    const randomY = Math.random() * maxHeight;
+    let randomX, randomY;
+    let overlap = true;
+
+    while (overlap) {
+      randomX = Math.random() * maxWidth;
+      randomY = Math.random() * maxHeight;
+
+      // Yes button position
+      const yesRect = yesBtn.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+
+      const yesX = yesRect.left - containerRect.left;
+      const yesY = yesRect.top - containerRect.top;
+
+      // Distance check (minimum 100px gap)
+      const distance = Math.sqrt(
+        Math.pow(randomX - yesX, 2) +
+        Math.pow(randomY - yesY, 2)
+      );
+
+      if (distance > 120) {
+        overlap = false;
+      }
+    }
 
     noBtn.style.left = randomX + "px";
     noBtn.style.top = randomY + "px";
